@@ -3,6 +3,7 @@ import time
 
 from flask import Flask, render_template_string, abort
 from prometheus_client import generate_latest, REGISTRY, Counter, Gauge, Histogram
+from flask import Response
 
 app = Flask(__name__)
 
@@ -75,7 +76,7 @@ def index(name):
 @TIMINGS.time()
 def metrics():
     REQUESTS.labels(method='GET', endpoint="/metrics", status_code=200).inc()
-    return generate_latest(REGISTRY)
+    return Response(generate_latest(REGISTRY), mimetype="text/plain")
 
 
 if __name__ == "__main__":
