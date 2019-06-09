@@ -39,10 +39,10 @@ def hello_world():
 @IN_PROGRESS.track_inprogress()
 def narrow_world():
     if int(time.time()) % 2 == 0:
-        REQUESTS.labels(method='GET', endpoint="/", status_code=200).inc()  # Increment the counter
+        REQUESTS.labels(method='GET', endpoint="/fast", status_code=200).inc()  # Increment the counter
         return 'Hello, World!'
     else:
-        REQUESTS.labels(method='POST', endpoint="/", status_code=500).inc()  # Increment the counter
+        REQUESTS.labels(method='POST', endpoint="/fast", status_code=500).inc()  # Increment the counter
         return 'Nice world!'
 
 
