@@ -36,7 +36,7 @@ def hello_world():
 @TIMINGS.time()
 # Helper annotation to increment a gauge when entering the method and decrementing when leaving.
 @IN_PROGRESS.track_inprogress()
-def hello_world():
+def narrow_world():
     if int(time.time()) % 2 == 0:
         REQUESTS.labels(method='GET', endpoint="/", status_code=200).inc()  # Increment the counter
         return 'Hello, World!'
