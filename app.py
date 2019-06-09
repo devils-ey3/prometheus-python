@@ -23,8 +23,27 @@ TIMINGS = Histogram('http_request_duration_seconds', 'HTTP request latency (seco
 # Helper annotation to increment a gauge when entering the method and decrementing when leaving.
 @IN_PROGRESS.track_inprogress()
 def hello_world():
-    REQUESTS.labels(method='GET', endpoint="/", status_code=200).inc()  # Increment the counter
-    return 'Hello, World!'
+    if int(time.time()) % 2 == 0:
+        REQUESTS.labels(method='GET', endpoint="/", status_code=200).inc()  # Increment the counter
+        return 'Hello, World!'
+    else:
+        REQUESTS.labels(method='GET', endpoint="/", status_code=500).inc()  # Increment the counter
+        return 'Nice world!'
+
+# Standard Flask route stuff.
+@app.route('/fast')
+# Helper annotation to measure how long a method takes and save as a histogram metric.
+@TIMINGS.time()
+# Helper annotation to increment a gauge when entering the method and decrementing when leaving.
+@IN_PROGRESS.track_inprogress()
+def hello_world():
+    if int(time.time()) % 2 == 0:
+        REQUESTS.labels(method='GET', endpoint="/", status_code=200).inc()  # Increment the counter
+        return 'Hello, World!'
+    else:
+        REQUESTS.labels(method='POST', endpoint="/", status_code=500).inc()  # Increment the counter
+        return 'Nice world!'
+
 
 # Note I'm intentionally failing occasionally to simulate a flakey service.
 @app.route('/slow')
@@ -38,6 +57,9 @@ def slow_request():
     time.sleep(v)
     REQUESTS.labels(method='GET', endpoint="/slow", status_code=200).inc()
     return render_template_string('<h1>Wow, that took {{v}} s!</h1>', v=v)
+
+
+
 
 
 @app.route('/hello/<name>')
